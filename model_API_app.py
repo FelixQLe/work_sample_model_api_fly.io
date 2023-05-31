@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request
 import pandas as pd
 import joblib
-from tensorflow.keras.models import load_model
+import tensorflow as tf
 
-app = Flask(__name__)
+ws_app = Flask(__name__)
 
 # load the model and scaler
-loaded_model = load_model('best_lstm_model.SavedModel', compile=False)
+loaded_model = tf.keras.models.load_model('best_lstm_model.SavedModel', compile=False)
 
 with open('scaler_X.save', 'rb') as fX:
     scaler_X = joblib.load(fX)
@@ -14,7 +14,7 @@ with open('scaler_X.save', 'rb') as fX:
 with open('scaler_y.save', 'rb') as fy:
     scaler_y = joblib.load(fy)
 
-@app.route('/predict')
+@ws_app.route('/predict')
 def predict():
     # get query parameters from request
     vol_moving_avg = float(request.args.get('vol_moving_avg'))
@@ -41,5 +41,5 @@ def predict():
     return jsonify(result)
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    app.run(debug=True)
+    ws_app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    #ws_app.run(debug=True)
